@@ -11,14 +11,14 @@ app = Flask(__name__)
 # Every page that is on the website will need an app.route defined here
 @app.route('/')
 def get_home():
-  return render_template('home.html')
+  return render_template('home.html', title='Home')
 
 @app.route('/about')
 def get_about():
   return render_template('about.html')
 
 @app.route('/acknowledgements')
-def get_():
+def get_acknowledgements():
   return render_template('acknowledgements.html')
 
 @app.route('/delegates')
@@ -30,7 +30,7 @@ def get_delegate(url):
   return "The passed URL is " + str(url)
 
 @app.route('/feedback')
-def get_map():
+def get_feedback():
   return render_template('feedback.html')
 
 @app.route('/map')
