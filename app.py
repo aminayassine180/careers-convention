@@ -15,31 +15,37 @@ def get_home():
 
 @app.route('/about')
 def get_about():
-  return render_template('about.html')
+  return render_template('about.html', title='More about our Convention', description='')
 
 @app.route('/acknowledgements')
 def get_acknowledgements():
-  return render_template('acknowledgements.html')
+  return render_template('acknowledgements.html', title='Acknowledgements of the Convention', description='')
 
 @app.route('/delegates')
 def get_delegates():
-  return render_template('delegates.html')
+  return render_template('delegates.html', title='Delegates attending the Convention', description='')
 
-@app.route('/delegate/<url>')
-def get_delegate(url):
-  return render_template('delegate.html', url=str(url))
+@app.route('/delegate/<internalURL>')
+def get_delegate(internalURL):
+  #TO DO - Access to the DB, bring the delegate data to each page.
+
+  # In this instane, the meta title and description values must come from the database.
+  return render_template('delegate.html', internalURL=internalURL, title='', description='')
 
 @app.route('/feedback')
 def get_feedback():
-  return render_template('feedback.html')
+  #TO DO - Create the form itself.
+  #TO DO - Create a new route to send the form contents to the database.
+
+  return render_template('feedback.html', title='Feedback Form', description='')
 
 @app.route('/map')
 def get_map():
-  return render_template('map.html')
+  return render_template('map.html', title='Location Map of the Convention', description='')
 
 @app.route('/news')
 def get_news():
-  return render_template('news.html')
+  return render_template('news.html', title='Latest news from the Careers Convention', description='')
 
 # start the server with the 'run()' method - debug=True for testing - NOT LIVE
 if __name__ == '__main__':
