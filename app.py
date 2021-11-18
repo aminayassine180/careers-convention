@@ -27,7 +27,7 @@ def get_delegates():
 
 @app.route('/delegate/<url>')
 def get_delegate(url):
-  return "The passed URL is " + str(url)
+  return render_template('delegate.html', url=str(url))
 
 @app.route('/feedback')
 def get_feedback():
