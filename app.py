@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Every page that is on the website will need an app.route defined here
 @app.route('/')
 def get_home():
-  return render_template('home.html', title='Home')
+  return render_template('home.html', title='Home', description='This is the meta-description.')
 
 @app.route('/about')
 def get_about():
