@@ -1,12 +1,15 @@
 
 {% extends "template.html" %}
 {% block content %}
-	<h1>{{ internalURL }}</h1>
-	<p>Details of the delegate whose URL is {{ internalURL }}.</p>
+	<h1>{{row["name"]}}</h1>	
 
-	<p>===============================</p>
-	<p>TO DO: Delegate Details from DB</p>
-	<p>===============================</p>
+	<p>{{row["description"]}}</p>	
+
+	<p>{{row["location"]}}</p>	
+
+	<p>{{row["category"]}}</p>	
+
+	<p>{{row["externalURL"]}}</p>	
 
 	<p>Go back to the <a href="/delegates">list of delegates</a>.</p>
 
