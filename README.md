@@ -16,4 +16,5 @@ You'll need to install the following libraries for this to work:
 
 ```
 pip3 install flask
+pip3 install flask-sqlalchemy
 ```
