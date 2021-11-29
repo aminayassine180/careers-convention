@@ -9,8 +9,11 @@ import logging
 import sqlite3
 from sqlite3 import Error
 
-from flask import flash, Flask, Markup, redirect, render_template, url_for
+import requests
+
+from flask import flash, Flask, Markup, redirect, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
 
 
 
@@ -25,18 +28,6 @@ app.config['SQLALCHEMY_ECHO'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-def query_to_list(query, include_field_names=True):
-    column_names = []
-    for i, obj in enumerate(query.all()):
-        if i == 0:
-            column_names = [c.name for c in obj.__table__.columns]
-            if include_field_names:
-                yield column_names
-        yield obj_to_list(obj, column_names)
-
-def obj_to_list(sa_obj, field_order):
-    return [getattr(sa_obj, field_name, None) for field_name in field_order]
-
 
 # database models
 class Category(db.Model):
@@ -44,7 +35,6 @@ class Category(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    internalurl = db.Column(db.String)
 
     def __repr__(self):
         return '<Category {:d} {}>'.format(self.id, self.name)
@@ -63,6 +53,8 @@ class Delegate(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     internalurl = db.Column(db.String)
     externalurl = db.Column(db.String)
+    categoryRelationship = relationship("Category",backref="Category",uselist=True)
+    category=relationship("Category",lazy="joined")
 
     def __repr__(self):
         return '<Delegate {:d} {}>'.format(self.id, self.name)
@@ -70,8 +62,12 @@ class Delegate(db.Model):
     def __str__(self):
         return self.name
 
-
-
+def returnOrderByField(querystringParameter):
+  #Let's see if they have asked for a specific sort 
+  if querystringParameter=="location":
+    return Delegate.location
+  else:
+    return Delegate.name
 
 # Every page that is on the website will need an app.route defined here
 @app.route('/')
@@ -86,12 +82,24 @@ def get_about():
 def get_acknowledgements():
   return render_template('acknowledgements.html', title='Acknowledgements of the Convention', description='')
 
-@app.route('/delegates')
-def get_delegates():
-  #TO DO - Add the ability to filter the list of delegates
-  query = Delegate.query.filter(Delegate.id >= 0)
 
-  return render_template('delegates.html', title='Delegates attending the Convention', description='', rows=query.all())
+@app.route("/delegates/", defaults={"internalURL": None})
+@app.route('/delegates/<string:internalURL>')
+def get_delegates_filtered(internalURL):
+
+  if internalURL is None:
+    #Simply return all the delegate records
+    query = Delegate.query.filter(Delegate.id >= 0).order_by(returnOrderByField(request.args.get('sort', default = 'name', type = str)))
+    builtDescription=""
+    filteredView=0
+  else:
+    #Filter the delegate records to only those whose category name matches the filter.
+    #We have to replace the dashes (-) back to spaces, that were removed in the template files, for this to work.
+    query = Delegate.query.filter(Delegate.category.has(name=internalURL.replace("-"," "))).order_by(returnOrderByField(request.args.get('sort', default = 'name', type = str)))
+    filteredView=1
+    builtDescription=internalURL.replace("-"," ")
+    
+  return render_template('delegates.html', title='Delegates attending the Convention', description=builtDescription, filteredView=filteredView,rows=query.all())
 
 @app.route('/delegate/<string:internalURL>')
 def get_delegate(internalURL):

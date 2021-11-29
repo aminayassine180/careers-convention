@@ -4,11 +4,11 @@
 
 	<h1>{{row["name"]}}</h1>	
 
-	{% if row["category_id"] != None %}
-	<p>Category: <a title="Click here to see all delegates in the same category." href="/delegates/{{row["category_id"]}}">{{row["category_id"]}}</a></p>	
+	{% if row["category"] != None %}
+	<p>Category: <a title="Click here to see all delegates in the same category." href="/delegates/{{row["category"]|replace(' ', '-')}}">{{row["category"]}}</a></p>	
 	{% endif %}
 
-	<p>{{row["description"]}}</p>	
+	<p>{{row["description"]}}</p>
 
 	<p>Location: {{row["location"]}}</p>
 
