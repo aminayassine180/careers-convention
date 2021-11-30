@@ -88,7 +88,7 @@ def get_acknowledgements():
 def get_delegates_filtered(internalURL):
 
   if internalURL is None:
-    #Simply return all the delegate records
+    #Simply return all the delegate records - sorted if necessary
     query = Delegate.query.filter(Delegate.id >= 0).order_by(returnOrderByField(request.args.get('sort', default = 'name', type = str)))
     builtDescription=""
     filteredView=0
